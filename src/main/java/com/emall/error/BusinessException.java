@@ -8,6 +8,7 @@ public class BusinessException extends Exception implements CommonError {
 
     private CommonError commonError;
 
+
     // 直接接收 EmBusinessError 的传参用于构造业务异常
     public BusinessException(CommonError commonError) {
         super();

@@ -1,5 +1,6 @@
 package com.emall.interceptor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -10,9 +11,13 @@ import javax.servlet.http.HttpServletResponse;
  * @author XYY
  * @date 2018/12/26 2:25 PM
  */
+@Slf4j
 public class Processinterceptor implements HandlerInterceptor {
+
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
+
+        log.info("进入拦截器");
         //处理因跨域请求问题导致的一些问题
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
 

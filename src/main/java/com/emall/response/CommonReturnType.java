@@ -1,15 +1,22 @@
 package com.emall.response;
 
+
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import java.io.Serializable;
+
 /**
  * @author XYY
  * @date 2018/12/25 10:16 PM
  */
-public class CommonReturnType {
+public class CommonReturnType implements Serializable {
     // 表明对应请求的返回处理结果"success"或"fail"
     private String status;
     // 若 status=success，则 data 内返回前端需要的 json 数据
     // 若 status=fail，则 data 内使用通用的错误码格式
-    private Object data;
+    private static Object data;
+
 
     // 定义一个通用的创建方法
     public static CommonReturnType create(Object result) {
@@ -20,6 +27,11 @@ public class CommonReturnType {
         type.setStatus(status);
         type.setData(result);
         return type;
+    }
+
+    @JsonIgnore
+    public boolean isSuccess() {
+        return StringUtils.equals(this.status, "success");
     }
 
     public String getStatus() {
