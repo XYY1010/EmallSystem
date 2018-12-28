@@ -1,21 +1,17 @@
-package com.emall.form;
+package com.emall.controller.viewobject;
 
 import lombok.Getter;
 import lombok.Setter;
 
-
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 /**
- * Created by kimvra on 2018/12/27
+ * Created by kimvra on 2018/12/28
  */
-@Getter
 @Setter
-public class UserForm {
-
+@Getter
+public class UserVO {
     private String avatarUrl;
 
     @NotBlank(message = "昵称不能为空")

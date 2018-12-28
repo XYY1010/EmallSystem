@@ -1,9 +1,9 @@
 package com.emall.controller;
 
 import com.emall.common.Const;
+import com.emall.controller.viewobject.UserVO;
 import com.emall.error.BusinessException;
 import com.emall.error.EmBusinessError;
-import com.emall.form.UserForm;
 import com.emall.response.CommonReturnType;
 import com.emall.service.IUserService;
 import com.emall.utils.CookieUtil;
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PostMapping("userInfo")
-    public CommonReturnType userInfo(@Valid UserForm userForm, BindingResult bindingResult,
+    public CommonReturnType userInfo(@Valid UserVO userVO, BindingResult bindingResult,
                                      HttpServletRequest request) throws BusinessException {
         if (bindingResult.hasErrors()) {
             //System.out.println(bindingResult.getAllErrors().toString());
@@ -76,7 +76,7 @@ public class UserController {
             throw new BusinessException(EmBusinessError.TOKEN_EXPIRED);
         }
         String userId = redisTemplate.opsForValue().get(token);
-        CommonReturnType returnType = userService.userInfo(userForm, userId);
+        CommonReturnType returnType = userService.userInfo(userVO, userId);
         if (returnType.isSuccess()) {
             redisTemplate.opsForValue().set(token, userId, Const.REDIS_SESSION_EXPIRETIME);
         }

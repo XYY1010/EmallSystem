@@ -1,7 +1,7 @@
 package com.emall.service;
 
+import com.emall.controller.viewobject.UserVO;
 import com.emall.error.BusinessException;
-import com.emall.form.UserForm;
 import com.emall.response.CommonReturnType;
 
 /**
@@ -13,5 +13,5 @@ public interface IUserService {
     CommonReturnType register(String username, String email, String telephone,
                               String password, String confirmPassword) throws BusinessException;
 
-    CommonReturnType userInfo(UserForm userForm, String userId) throws BusinessException;
+    CommonReturnType userInfo(UserVO userVO, String userId) throws BusinessException;
 }

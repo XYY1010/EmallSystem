@@ -1,8 +1,10 @@
 package com.emall.response;
 
 
+
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
+
 
 import java.io.Serializable;
 

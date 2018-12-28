@@ -1,13 +1,13 @@
 package com.emall.service.impl;
 
 import com.emall.common.Const;
+import com.emall.controller.viewobject.UserVO;
 import com.emall.dao.UserDOMapper;
 import com.emall.dao.UserPasswordDOMapper;
 import com.emall.dataobject.UserDO;
 import com.emall.dataobject.UserPasswordDO;
 import com.emall.error.BusinessException;
 import com.emall.error.EmBusinessError;
-import com.emall.form.UserForm;
 import com.emall.response.CommonReturnType;
 import com.emall.service.IUserService;
 import com.emall.utils.DateTimeUtil;
@@ -146,19 +146,19 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public CommonReturnType userInfo(UserForm userForm, String userId) throws BusinessException{
-        if (checkValid(userForm.getUserName(), Const.USERNAME)) {
+    public CommonReturnType userInfo(UserVO userVO, String userId) throws BusinessException{
+        if (checkValid(userVO.getUserName(), Const.USERNAME)) {
             UserDO userDO = new UserDO();
-            BeanUtils.copyProperties(userForm, userDO);
+            BeanUtils.copyProperties(userVO, userDO);
             userDO.setUserId(userId);
-            if (userForm.getGender() == Const.MAN_CODE) {
+            if (userVO.getGender() == Const.MAN_CODE) {
                 userDO.setGender(true);
             }
-            if (userForm.getGender() == Const.WOMEN_CODE) {
+            if (userVO.getGender() == Const.WOMEN_CODE) {
                 userDO.setGender(false);
             }
-            if (userForm.getBirthday() != null) {
-                userDO.setBirthday(DateTimeUtil.str2Date(userForm.getBirthday()));
+            if (userVO.getBirthday() != null) {
+                userDO.setBirthday(DateTimeUtil.str2Date(userVO.getBirthday()));
             }
             int result = userDOMapper.updateByPrimaryKeySelective(userDO);
             if (result == 0) {
@@ -172,23 +172,5 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    public static void main(String[] args) {
-        UserForm userForm = new UserForm();
-        userForm.setAddress("a");
-        userForm.setUserName("a");
-        userForm.setRealname("a");
-        userForm.setHometown("a");
-        userForm.setGender(1);
-        userForm.setBirthday("1995-12-20");
-        UserDO userDO = new UserDO();
-        userDO.setUserId("111");
-        if (userForm.getGender() == 1) {
-            userDO.setGender(true);
-        } else {
-            userDO.setGender(false);
-        }
-        userDO.setBirthday(DateTimeUtil.str2Date(userForm.getBirthday()));
-        BeanUtils.copyProperties(userForm, userDO);
-        System.out.println(userDO);
-    }
+
 }

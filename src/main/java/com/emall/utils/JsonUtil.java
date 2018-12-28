@@ -2,7 +2,6 @@ package com.emall.utils;
 
 
 import com.emall.response.CommonReturnType;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
