@@ -17,4 +17,5 @@ public interface UserPasswordDOMapper {
 
     int updateByPrimaryKey(UserPasswordDO record);
 
+    UserPasswordDO selectByUserId(String userId);
 }

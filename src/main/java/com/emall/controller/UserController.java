@@ -1,6 +1,7 @@
 package com.emall.controller;
 
 import com.emall.common.Const;
+import com.emall.controller.viewobject.AddressVO;
 import com.emall.controller.viewobject.UserVO;
 import com.emall.error.BusinessException;
 import com.emall.error.EmBusinessError;
@@ -70,18 +71,64 @@ public class UserController {
             log.error("参数错误", new BusinessException(EmBusinessError.PARAM_ERROR, bindingResult.getFieldError().getDefaultMessage()));
             throw new BusinessException(EmBusinessError.PARAM_ERROR, bindingResult.getFieldError().getDefaultMessage());
         }
-        String token = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(token)) {
-            log.error("token过期", new BusinessException(EmBusinessError.TOKEN_EXPIRED));
-            throw new BusinessException(EmBusinessError.TOKEN_EXPIRED);
-        }
-        String userId = redisTemplate.opsForValue().get(token);
-        CommonReturnType returnType = userService.userInfo(userVO, userId);
-        if (returnType.isSuccess()) {
-            redisTemplate.opsForValue().set(token, userId, Const.REDIS_SESSION_EXPIRETIME);
-        }
+//        String token = CookieUtil.readLoginToken(request);
+//        if (StringUtils.isBlank(token)) {
+//            log.error("token过期", new BusinessException(EmBusinessError.TOKEN_EXPIRED));
+//            throw new BusinessException(EmBusinessError.TOKEN_EXPIRED);
+//        }
+//        String userId = redisTemplate.opsForValue().get(token);
+        CommonReturnType returnType = userService.userInfo(userVO, request);
+//        if (returnType.isSuccess()) {
+//            redisTemplate.opsForValue().set(token, userId, Const.REDIS_SESSION_EXPIRETIME);
+//        }
         return returnType;
     }
+
+    @PostMapping("modifyEmail")
+    public CommonReturnType modifyEmail(HttpServletRequest request, String email) throws BusinessException {
+        if (StringUtils.isBlank(email)) {
+            return CommonReturnType.create("邮箱不能为空");
+        }
+        return userService.modifyEmail(email, request);
+    }
+
+    @PostMapping("modifyTel")
+    public CommonReturnType modifyTel(HttpServletRequest request, String tel) throws BusinessException {
+        if (StringUtils.isBlank(tel)) {
+            return CommonReturnType.create("电话不能为空");
+        }
+        return userService.modifyTel(tel, request);
+    }
+
+    @PostMapping("modifyPassword")
+    public CommonReturnType modifyPassword(HttpServletRequest request, String oldPwd, String newPwd, String confirmPwd) throws BusinessException {
+        if (StringUtils.isBlank(oldPwd) || StringUtils.isBlank(newPwd) || StringUtils.isBlank(confirmPwd)) {
+            return CommonReturnType.create("密码不能为空");
+        }
+        return userService.modifyPassword(oldPwd, newPwd, confirmPwd, request);
+    }
+
+    @PostMapping("addAddress")
+    public CommonReturnType addAddress(@Valid AddressVO addressVO,
+                                       BindingResult bindingResult,
+                                       HttpServletRequest request) throws BusinessException {
+        if (bindingResult.hasErrors()) {
+            //System.out.println(bindingResult.getAllErrors().toString());
+            log.error("参数错误", new BusinessException(EmBusinessError.PARAM_ERROR, bindingResult.getFieldError().getDefaultMessage()));
+            throw new BusinessException(EmBusinessError.PARAM_ERROR, bindingResult.getFieldError().getDefaultMessage());
+        }
+        return userService.addAddress(addressVO, request);
+    }
+
+    @GetMapping("delAddress")
+    public CommonReturnType delAddress(String addressId, HttpServletRequest request) throws BusinessException {
+        if (StringUtils.isBlank(addressId)) {
+            log.error("参数错误", new BusinessException(EmBusinessError.PARAM_ERROR));
+            throw new BusinessException(EmBusinessError.PARAM_ERROR);
+        }
+        return userService.delAddress(addressId, request);
+    }
+
 
     @GetMapping("/test")
     public String test() {

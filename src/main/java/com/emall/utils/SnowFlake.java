@@ -37,7 +37,7 @@ public class SnowFlake {
     private long sequence = 0L; //序列号
     private long lastStmp = -1L;//上一次时间戳
 
-    public SnowFlake(long datacenterId, long machineId) {
+    private SnowFlake(long datacenterId, long machineId) {
         if (datacenterId > MAX_DATACENTER_NUM || datacenterId < 0) {
             throw new IllegalArgumentException("datacenterId can't be greater than MAX_DATACENTER_NUM or less than 0");
         }
@@ -53,7 +53,7 @@ public class SnowFlake {
      *
      * @return
      */
-    public synchronized long nextId() {
+    private synchronized long nextId() {
         long currStmp = getNewstmp();
         if (currStmp < lastStmp) {
             throw new RuntimeException("Clock moved backwards.  Refusing to generate id");
@@ -91,12 +91,17 @@ public class SnowFlake {
         return System.currentTimeMillis();
     }
 
+    public static String genId() {
+        SnowFlake snowFlake = new SnowFlake(2, 3);
+        return String.valueOf(snowFlake.nextId());
+    }
+
     public static void main(String[] args) {
         SnowFlake snowFlake = new SnowFlake(2, 3);
 
-        for (int i = 0; i < (1 << 12); i++) {
-            System.out.println(snowFlake.nextId());
-        }
-
+//        for (int i = 0; i < (1 << 12); i++) {
+//            System.out.println(snowFlake.nextId());
+//        }
+        System.out.println(snowFlake.nextId());
     }
 }

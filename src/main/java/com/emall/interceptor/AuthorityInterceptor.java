@@ -1,5 +1,6 @@
 package com.emall.interceptor;
 
+import com.emall.common.Const;
 import com.emall.response.CommonReturnType;
 import com.emall.utils.CookieUtil;
 import com.emall.utils.JsonUtil;
@@ -52,6 +53,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
             writer.close();
             return false;
         }
+        redisTemplate.opsForValue().set(loginToken, userId, Const.REDIS_SESSION_EXPIRETIME);
         return true;
     }
 

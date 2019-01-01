@@ -177,4 +177,5 @@
     and uinfo.user_name = #{username}
     and userp.encrpt_password = #{password}
   </select>
+
 </mapper>

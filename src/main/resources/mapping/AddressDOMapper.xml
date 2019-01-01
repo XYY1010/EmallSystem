@@ -166,4 +166,15 @@
       is_default = #{isDefault,jdbcType=BIT}
     where address_id = #{addressId,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectByUserId" parameterType="string" resultType="int">
+    select count(1) from em_address
+    where user_id = #{userId}
+  </select>
+
+  <delete id="deleteByUserIdAndAddressId" parameterType="java.util.Map" >
+    delete from em_address
+    where user_id = #{userId}
+    and address_id  = #{addressId}
+  </delete>
 </mapper>
