@@ -2,6 +2,8 @@ package com.emall.dao;
 
 import com.emall.dataobject.SellerCommentDO;
 
+import java.util.List;
+
 public interface SellerCommentDOMapper {
 
     int deleteByPrimaryKey(String sellerCommentId);
@@ -15,4 +17,6 @@ public interface SellerCommentDOMapper {
     int updateByPrimaryKeySelective(SellerCommentDO record);
 
     int updateByPrimaryKey(SellerCommentDO record);
+
+    List<SellerCommentDO> selectByUserId(String userId);
 }

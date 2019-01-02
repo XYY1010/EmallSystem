@@ -53,8 +53,8 @@
       comment, comment_type, create_time, 
       update_time)
     values (#{sellerCommentId,jdbcType=VARCHAR}, #{orderItemId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
-      #{comment,jdbcType=VARCHAR}, #{commentType,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{comment,jdbcType=VARCHAR}, #{commentType,jdbcType=TINYINT}, now(),
+      now())
   </insert>
   <insert id="insertSelective" parameterType="com.emall.dataobject.SellerCommentDO">
     <!--
@@ -103,10 +103,10 @@
         #{commentType,jdbcType=TINYINT},
       </if>
       <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
+        now(),
       </if>
       <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
+        now(),
       </if>
     </trim>
   </insert>
@@ -134,7 +134,7 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = now(),
       </if>
     </set>
     where seller_comment_id = #{sellerCommentId,jdbcType=VARCHAR}
@@ -151,7 +151,14 @@
       comment = #{comment,jdbcType=VARCHAR},
       comment_type = #{commentType,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where seller_comment_id = #{sellerCommentId,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectByUserId" parameterType="string" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from em_seller_comment
+    where user_id = #{userId}
+  </select>
 </mapper>

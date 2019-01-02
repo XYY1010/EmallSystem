@@ -17,7 +17,7 @@ public class CommonReturnType implements Serializable {
     private String status;
     // 若 status=success，则 data 内返回前端需要的 json 数据
     // 若 status=fail，则 data 内使用通用的错误码格式
-    private static Object data;
+    private Object data;
 
 
     // 定义一个通用的创建方法
@@ -32,7 +32,7 @@ public class CommonReturnType implements Serializable {
     }
 
     @JsonIgnore
-    public boolean isSuccess() {
+    public boolean success() {
         return StringUtils.equals(this.status, "success");
     }
 

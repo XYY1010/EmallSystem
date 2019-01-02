@@ -40,7 +40,7 @@ public class UserController {
                                   HttpSession session,
                                   HttpServletResponse response) throws BusinessException{
         CommonReturnType returnType = userService.login(userName, password);
-        if (returnType.isSuccess()) {
+        if (returnType.success()) {
             //写入cookie
             CookieUtil.writeLoginToken(response, session.getId());
             //写入redis
@@ -127,6 +127,22 @@ public class UserController {
             throw new BusinessException(EmBusinessError.PARAM_ERROR);
         }
         return userService.delAddress(addressId, request);
+    }
+
+    @GetMapping("getAddresses")
+    public CommonReturnType getAddresses(HttpServletRequest request) throws BusinessException {
+        return userService.getAddresses(request);
+    }
+
+    @GetMapping("commentsBySeller")
+    public CommonReturnType commentsBySeller(HttpServletRequest request) throws BusinessException {
+        return userService.commentsBySeller(request);
+    }
+
+    @PostMapping("commentsByBuyer")
+    public CommonReturnType commentsByBuyer(HttpServletRequest request, String orderItemId, String comment,
+                                            @RequestParam(defaultValue = "1") String commentType, String commentImgUrl) throws BusinessException{
+        return userService.commentsByUser(request, orderItemId, comment, commentType, commentImgUrl);
     }
 
 

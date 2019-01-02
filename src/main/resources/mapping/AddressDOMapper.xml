@@ -167,7 +167,7 @@
     where address_id = #{addressId,jdbcType=VARCHAR}
   </update>
 
-  <select id="selectByUserId" parameterType="string" resultType="int">
+  <select id="selectCountByUserId" parameterType="string" resultType="int">
     select count(1) from em_address
     where user_id = #{userId}
   </select>
@@ -177,4 +177,11 @@
     where user_id = #{userId}
     and address_id  = #{addressId}
   </delete>
+
+  <select id="selectByUserId" parameterType="string" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from em_address
+    where user_id = #{userId}
+  </select>
 </mapper>

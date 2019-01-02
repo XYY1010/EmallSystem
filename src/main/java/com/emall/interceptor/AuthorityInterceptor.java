@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kimvra on 2018/12/27
@@ -53,7 +54,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
             writer.close();
             return false;
         }
-        redisTemplate.opsForValue().set(loginToken, userId, Const.REDIS_SESSION_EXPIRETIME);
+        redisTemplate.expire(loginToken, Const.REDIS_SESSION_EXPIRETIME, TimeUnit.SECONDS);
         return true;
     }
 

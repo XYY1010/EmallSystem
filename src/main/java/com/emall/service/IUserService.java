@@ -28,4 +28,11 @@ public interface IUserService {
     CommonReturnType addAddress(AddressVO addressVO, HttpServletRequest request) throws BusinessException;
 
     CommonReturnType delAddress(String addressId, HttpServletRequest request) throws BusinessException;
+
+    CommonReturnType getAddresses(HttpServletRequest request) throws BusinessException;
+
+    CommonReturnType commentsBySeller(HttpServletRequest request) throws BusinessException;
+
+    CommonReturnType commentsByUser(HttpServletRequest request, String order_item_id, String comment,
+                                    String commentType, String connect_img_url) throws BusinessException;
 }

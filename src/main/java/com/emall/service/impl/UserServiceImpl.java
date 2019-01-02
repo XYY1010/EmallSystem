@@ -3,12 +3,8 @@ package com.emall.service.impl;
 import com.emall.common.Const;
 import com.emall.controller.viewobject.AddressVO;
 import com.emall.controller.viewobject.UserVO;
-import com.emall.dao.AddressDOMapper;
-import com.emall.dao.UserDOMapper;
-import com.emall.dao.UserPasswordDOMapper;
-import com.emall.dataobject.AddressDO;
-import com.emall.dataobject.UserDO;
-import com.emall.dataobject.UserPasswordDO;
+import com.emall.dao.*;
+import com.emall.dataobject.*;
 import com.emall.error.BusinessException;
 import com.emall.error.EmBusinessError;
 import com.emall.response.CommonReturnType;
@@ -23,6 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -43,6 +40,12 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private AddressDOMapper addressDOMapper;
+
+    @Autowired
+    private SellerCommentDOMapper sellerCommentDOMapper;
+
+    @Autowired
+    private BuyerCommentDOMapper buyerCommentDOMapper;
 
     /**
      *
@@ -160,7 +163,7 @@ public class UserServiceImpl implements IUserService {
         if (checkValid(userVO.getUserName(), Const.USERNAME)) {
             UserDO userDO = new UserDO();
             BeanUtils.copyProperties(userVO, userDO);
-            String userId = getUserId(request).getData().toString();
+            String userId = getUserId(request);
             userDO.setUserId(userId);
             if (userVO.getGender() == Const.MAN_CODE) {
                 userDO.setGender(true);
@@ -193,7 +196,7 @@ public class UserServiceImpl implements IUserService {
     public CommonReturnType modifyEmail(String email, HttpServletRequest request) throws BusinessException{
         if (checkValid(email, Const.EMAIL)) {
             UserDO userDO = new UserDO();
-            String userId = getUserId(request).getData().toString();
+            String userId = getUserId(request);
             userDO.setUserId(userId);
             userDO.setEmail(email);
             int result = userDOMapper.updateByPrimaryKeySelective(userDO);
@@ -213,7 +216,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public CommonReturnType modifyTel(String tel, HttpServletRequest request) throws BusinessException{
-        String userId = getUserId(request).getData().toString();
+        String userId = getUserId(request);
         if (checkValid(tel, Const.TELEPHONE)) {
             UserDO userDO = new UserDO();
             userDO.setUserId(userId);
@@ -238,7 +241,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
      public CommonReturnType modifyPassword(String oldPwd, String newPwd, String confirmPwd, HttpServletRequest request) throws BusinessException{
-        String userId = getUserId(request).getData().toString();
+        String userId = getUserId(request);
         UserPasswordDO userPasswordDO = userPasswordDOMapper.selectByUserId(userId);
         if (userPasswordDO == null) {
             return CommonReturnType.create("无该用户信息", "fail");
@@ -258,16 +261,16 @@ public class UserServiceImpl implements IUserService {
         return CommonReturnType.create("修改密码成功");
     }
 
-    private CommonReturnType getUserId(HttpServletRequest request) {
+    private String getUserId(HttpServletRequest request) throws BusinessException{
         String token = CookieUtil.readLoginToken(request);
         if (StringUtils.isBlank(token)) {
-            return CommonReturnType.create("token失效,请重新登录", "fail");
+            throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
         }
         String userId = redisTemplate.opsForValue().get(token);
         if (StringUtils.isBlank(userId)) {
-            return CommonReturnType.create("用户信息失效,请重新登陆", "fail");
+            throw new BusinessException(EmBusinessError.TOKEN_EXPIRED);
         }
-        return CommonReturnType.create(userId);
+        return userId;
     }
 
     /**
@@ -280,7 +283,7 @@ public class UserServiceImpl implements IUserService {
     public CommonReturnType addAddress(AddressVO addressVO, HttpServletRequest request) throws BusinessException{
         AddressDO addressDO = new AddressDO();
         BeanUtils.copyProperties(addressVO, addressDO);
-        String userId = getUserId(request).getData().toString();
+        String userId = getUserId(request);
         if (StringUtils.isBlank(userId)) {
             log.error("查不到用户的信息", new BusinessException(EmBusinessError.USER_NOT_EXIST));
             throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
@@ -288,7 +291,7 @@ public class UserServiceImpl implements IUserService {
         addressDO.setUserId(userId);
         String addressId = SnowFlake.genId();
         addressDO.setAddressId(addressId);
-        int result = addressDOMapper.selectByUserId(userId);
+        int result = addressDOMapper.selectCountByUserId(userId);
         if (result == 0) {
             addressDO.setIsDefault(true);
         }
@@ -308,7 +311,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public CommonReturnType delAddress(String addressId, HttpServletRequest request) throws BusinessException{
-        String userId = getUserId(request).getData().toString();
+        String userId = getUserId(request);
         if (StringUtils.isBlank(userId)) {
             log.error("查不到用户的信息", new BusinessException(EmBusinessError.USER_NOT_EXIST));
             throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
@@ -318,5 +321,72 @@ public class UserServiceImpl implements IUserService {
             return CommonReturnType.create("删除地址失败", "fail");
         }
         return CommonReturnType.create("删除地址成功");
+    }
+
+    /**
+     *
+     * @param request 用户相关信息
+     * @return 返回收货地址信息
+     * @throws BusinessException 异常
+     */
+    @Override
+    public CommonReturnType getAddresses(HttpServletRequest request) throws BusinessException{
+        String userId = getUserId(request);
+        if (StringUtils.isBlank(userId)) {
+            log.error("查不到用户的信息", new BusinessException(EmBusinessError.USER_NOT_EXIST));
+            throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
+        }
+        List<AddressDO> addressDOList = addressDOMapper.selectByUserId(userId);
+        return CommonReturnType.create(addressDOList);
+    }
+
+    /**
+     *
+     * @param request 用户相关信息
+     * @return 商家评价
+     * @throws BusinessException 异常
+     */
+    @Override
+    public CommonReturnType commentsBySeller(HttpServletRequest request) throws BusinessException{
+        String userId = getUserId(request);
+        if (StringUtils.isBlank(userId)) {
+            log.error("查不到用户的信息", new BusinessException(EmBusinessError.USER_NOT_EXIST));
+            throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
+        }
+        List<SellerCommentDO> sellerCommentDOList = sellerCommentDOMapper.selectByUserId(userId);
+        return CommonReturnType.create(sellerCommentDOList);
+    }
+
+    /**
+     *
+     * @param request 获取用户id
+     * @param orderItemId 订单id
+     * @param comment 评论
+     * @param commentType 评论类型
+     * @param commentImgUrl 图片
+     * @return 成功或失败
+     * @throws BusinessException 异常
+     */
+    @Override
+    public CommonReturnType commentsByUser(HttpServletRequest request, String orderItemId,
+                                           String comment, String commentType, String commentImgUrl) throws BusinessException{
+        String userId = getUserId(request);
+        if (StringUtils.isBlank(userId)) {
+            log.error("查不到用户的信息", new BusinessException(EmBusinessError.USER_NOT_EXIST));
+            throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
+        }
+        BuyerCommentDO buyerCommentDO = new BuyerCommentDO();
+        String buyer_comment_id = SnowFlake.genId();
+        buyerCommentDO.setBuyerCommentId(buyer_comment_id);
+        buyerCommentDO.setOrderItemId(orderItemId);
+        buyerCommentDO.setUserId(userId);
+        buyerCommentDO.setComment(comment);
+        buyerCommentDO.setCommentType(Byte.valueOf(commentType));
+        buyerCommentDO.setCommentImgUrl(commentImgUrl);
+        int result = buyerCommentDOMapper.insert(buyerCommentDO);
+        if (result == 0) {
+            return CommonReturnType.create("评论失败", "fail");
+        }
+        return CommonReturnType.create(buyerCommentDO);
     }
 }

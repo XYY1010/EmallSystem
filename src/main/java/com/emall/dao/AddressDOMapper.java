@@ -3,6 +3,8 @@ package com.emall.dao;
 import com.emall.dataobject.AddressDO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface AddressDOMapper {
 
     int deleteByPrimaryKey(String addressId);
@@ -17,7 +19,9 @@ public interface AddressDOMapper {
 
     int updateByPrimaryKey(AddressDO record);
 
-    int selectByUserId(String userId);
+    int selectCountByUserId(String userId);
 
     int deleteByUserIdAndAddressId(@Param("userId") String userId, @Param("addressId") String addressId);
+
+    List<AddressDO> selectByUserId(String userId);
 }
