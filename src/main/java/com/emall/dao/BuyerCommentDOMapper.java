@@ -58,4 +58,5 @@ public interface BuyerCommentDOMapper {
      * @mbg.generated Thu Dec 27 15:26:02 CST 2018
      */
     int updateByPrimaryKey(BuyerCommentDO record);
+    int getCommentCount(String itemId);
 }

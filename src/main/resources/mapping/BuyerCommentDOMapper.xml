@@ -197,4 +197,7 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where buyer_comment_id = #{buyerCommentId,jdbcType=VARCHAR}
   </update>
+  <select id="getCommentCount"  parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(*) from em_buyer_comment where order_item_id = #{itemId};
+  </select>
 </mapper>
