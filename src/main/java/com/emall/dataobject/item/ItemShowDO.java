@@ -1,4 +1,4 @@
-package com.emall.dataobject;
+package com.emall.dataobject.item;
 
 import java.util.List;
 
@@ -9,7 +9,6 @@ public class ItemShowDO {
     private String itemDetailImage;
     private String itemIntroImage;
     private List<MealDO> meal;
-    private List<ItemDO> topSales;
 
     public String getItemId() {
         return itemId;
@@ -57,13 +56,5 @@ public class ItemShowDO {
 
     public void setMeal(List<MealDO> meal) {
         this.meal = meal;
-    }
-
-    public List<ItemDO> getTopSales() {
-        return topSales;
-    }
-
-    public void setTopSales(List<ItemDO> topSales) {
-        this.topSales = topSales;
     }
 }

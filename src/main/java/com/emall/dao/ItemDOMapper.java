@@ -65,4 +65,5 @@ public interface ItemDOMapper {
     List<ItemDO> getItems(Map<String,Object> data);
     List<ItemDO> getTopSails(int number);
     int getItemCount();
+    int getItemSale(String itemId);
 }

@@ -1,4 +1,4 @@
-package com.emall.dataobject;
+package com.emall.dataobject.item;
 
 public class GoodsListDO {
     private String itemId;
@@ -15,6 +15,7 @@ public class GoodsListDO {
     private String img;
     private String intro;
     private int remarks;
+    private int itemSales;
     public GoodsListDO(){
         remarks = 100;
     }
@@ -23,6 +24,14 @@ public class GoodsListDO {
         this.img = img;
         this.intro = intro;
         this.remarks = remarks;
+    }
+
+    public int getItemSales() {
+        return itemSales;
+    }
+
+    public void setItemSales(int itemSales) {
+        this.itemSales = itemSales;
     }
 
     public String getItemId() {

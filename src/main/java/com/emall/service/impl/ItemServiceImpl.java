@@ -2,6 +2,9 @@ package com.emall.service.impl;
 
 import com.emall.dao.*;
 import com.emall.dataobject.*;
+import com.emall.dataobject.item.GoodsListDO;
+import com.emall.dataobject.item.ItemShowDO;
+import com.emall.dataobject.item.MealDO;
 import com.emall.error.BusinessException;
 import com.emall.response.CommonReturnType;
 import com.emall.service.ItemService;
@@ -60,6 +63,7 @@ public class ItemServiceImpl implements ItemService {
             goodsListDO.setIntro(itemDOS.get(i).getItemTitle());
             goodsListDO.setRemarks(buyerCommentDOMapper.getCommentCount(itemId));
             goodsListDO.setPrice(itemStockDOMapper.getMinPrice(itemId));
+            goodsListDO.setItemSales(itemDOMapper.getItemSale(itemId));
             goodsListDOS.add(goodsListDO);
         }
         return CommonReturnType.create(goodsListDOS);
@@ -73,6 +77,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public CommonReturnType getItemDetil(String itemId) throws BusinessException {
+        System.out.println("itemid:"+itemId);
         ItemDO itemDO = itemDOMapper.selectByPrimaryKey(itemId);
         ItemShowDO itemShowDO = new ItemShowDO();
         itemShowDO.setItemId(itemId);
@@ -81,7 +86,6 @@ public class ItemServiceImpl implements ItemService {
         itemShowDO.setItemDetailImage(itemDO.getItemDetailImage());
         itemShowDO.setItemIntroImage(itemDO.getItemIntroImage());
         itemShowDO.setMeal(getMeal(itemId));
-        itemShowDO.setTopSales(getTopSales(ItemServiceImpl.TOP_SALES_NUMBER));
         return CommonReturnType.create(itemShowDO);
     }
 

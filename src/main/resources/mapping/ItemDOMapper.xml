@@ -222,4 +222,7 @@
   <select id="getItemCount" resultType="java.lang.Integer">
       select count(*) from em_item;
   </select>
+  <select id="getItemSale" parameterType="java.lang.String" resultType="java.lang.Integer">
+      select item_sales from em_item where item_id = #{itemId};
+  </select>
 </mapper>

@@ -1,4 +1,6 @@
-package com.emall.dataobject;
+package com.emall.dataobject.item;
+
+import com.emall.dataobject.ItemAttrValDO;
 
 import java.util.List;
 
