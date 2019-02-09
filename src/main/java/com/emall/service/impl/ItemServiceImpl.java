@@ -3,6 +3,7 @@ package com.emall.service.impl;
 import com.emall.dao.*;
 import com.emall.dataobject.*;
 import com.emall.dataobject.item.GoodsListDO;
+import com.emall.dataobject.item.HotItemDO;
 import com.emall.dataobject.item.ItemShowDO;
 import com.emall.dataobject.item.MealDO;
 import com.emall.error.BusinessException;
@@ -77,7 +78,6 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public CommonReturnType getItemDetil(String itemId) throws BusinessException {
-        System.out.println("itemid:"+itemId);
         ItemDO itemDO = itemDOMapper.selectByPrimaryKey(itemId);
         ItemShowDO itemShowDO = new ItemShowDO();
         itemShowDO.setItemId(itemId);
@@ -88,7 +88,11 @@ public class ItemServiceImpl implements ItemService {
         itemShowDO.setMeal(getMeal(itemId));
         return CommonReturnType.create(itemShowDO);
     }
-
+    @Override
+    public CommonReturnType getIntroImg(String itemId) throws BusinessException{
+        ItemDO itemDO = itemDOMapper.selectByPrimaryKey(itemId);
+        return CommonReturnType.create(itemDO.getItemIntroImage());
+    }
     /**
      *
      * @param itemId 商品的id
@@ -110,8 +114,20 @@ public class ItemServiceImpl implements ItemService {
      * @return CommonReturnType
      * @throws BusinessException
      */
-    public List<ItemDO> getTopSales(int number) throws BusinessException{
-        return itemDOMapper.getTopSails(number);
+    @Override
+    public CommonReturnType getTopSales(int number) throws BusinessException{
+        List<ItemDO> itemDOS = itemDOMapper.getTopSails(number);
+        List<HotItemDO> hotItemDOS = new ArrayList<>();
+        for(int i = 0; i < itemDOS.size(); i++){
+            HotItemDO hotItemDO = new HotItemDO();
+            String itemId = itemDOS.get(i).getItemId();
+            hotItemDO.setItemId(itemId);
+            hotItemDO.setImg(itemDOS.get(i).getItemMainImage());
+            hotItemDO.setPrize(itemStockDOMapper.getMinPrice(itemId));
+            hotItemDO.setSale(itemDOS.get(i).getItemSales());
+            hotItemDOS.add(hotItemDO);
+        }
+        return CommonReturnType.create(hotItemDOS);
     }
 
     /**

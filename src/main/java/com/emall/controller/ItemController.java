@@ -41,8 +41,16 @@ public class ItemController {
                                                  @RequestParam("symbol") String symbol) throws BusinessException{
         return itemService.getItemPriceAndStock(itemId,symbol);
     }
-    @GetMapping("getItemCount")
+    @GetMapping("/getItemCount")
     public CommonReturnType getItemCount() throws BusinessException{
         return CommonReturnType.create(itemService.getItemCount());
+    }
+    @GetMapping("/getHotItems")
+    public CommonReturnType getHotItems(@RequestParam("number") int number) throws  BusinessException{
+        return itemService.getTopSales(number);
+    }
+    @GetMapping("/getIntroImg")
+    public CommonReturnType getIntroImg(@RequestParam("itemId") String itemId) throws BusinessException{
+        return itemService.getIntroImg(itemId);
     }
 }
